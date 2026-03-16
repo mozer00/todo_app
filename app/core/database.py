@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy import sessionmaker, DeclarativeBase
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
 # conexao com o banco de dados
 DATABASE_URL = "sqlite:///./todo.db"
