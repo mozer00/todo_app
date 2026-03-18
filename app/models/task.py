@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from sqlalchemy import Boolean, DateTime, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
-from app.db import Base
+from app.core.database import Base
 
 class Task(Base):
     #nome da tabela no banco
