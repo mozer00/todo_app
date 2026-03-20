@@ -20,7 +20,7 @@ def get_task_by_id(db: Session, task_id: int) -> Task:
     return task
 
 
-def get_all_task(db: Session, skip: int=0, limit: int=100) -> list[Task]:
+def get_all_tasks(db: Session, skip: int=0, limit: int=100) -> list[Task]:
     
     #pede ao repository para buscar todas as tarefas
     return task_repository.get_all(db, skip=skip, limit=limit)     

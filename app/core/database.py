@@ -11,7 +11,7 @@ engine = create_engine(
 )
 
 #autocommit/autoflush=false para controlar quando salvar e para o sqlalchemy nao enviar sql pro banco antes do commit
-SessionLocal = sessionmaker(autocommit=False, autoFlush=False, bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 #classe base, todo model vai herdar dela
 class Base(DeclarativeBase):

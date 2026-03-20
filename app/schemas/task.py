@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, Field
-from datetimetime import datetime
+from datetime import datetime
 
 
 
@@ -46,8 +46,8 @@ class TaskUpdate(BaseModel):
 class TaskResponse(TaskBase):
     id: int
     is_completed: bool
-    create_at: datetime
-    update_at: datetime
+    created_at: datetime
+    updated_at: datetime
 
     #usado para converter um obj sqlalchemy(task) em um schema(taskresponse)
     #sqlalchemy retorna objetos python, nao dicionarios
