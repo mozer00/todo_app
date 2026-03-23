@@ -4,10 +4,11 @@ from app.models.task import Task
 from app.repositories import task_repository
 from app.schemas.task import TaskCreate, TaskUpdate
 
-
+#camada de serviço responsável pelas regras de negócio
+#atua como intermediária entre a API e o acesso a dados (repository)
 
 def get_task_by_id(db: Session, task_id: int) -> Task:
-    #pede ao repository para buscar a tarefa
+    #busca a tarefa na camada de persistência
     task = task_repository.get_by_id(db, task_id)
 
     #se nao encontrar a tarefa, repository retorna none
@@ -22,7 +23,7 @@ def get_task_by_id(db: Session, task_id: int) -> Task:
 
 def get_all_tasks(db: Session, skip: int=0, limit: int=100) -> list[Task]:
     
-    #pede ao repository para buscar todas as tarefas
+    #retorna lista de tarefas com suporte a paginação (skip/limit)
     return task_repository.get_all(db, skip=skip, limit=limit)     
 
 
@@ -35,14 +36,14 @@ def create_task(db: Session, task_data: TaskCreate) -> Task:
 
 def update_task(db: Session, task_id: int, task_data: TaskUpdate) -> Task:
 
-    #verifica se a tarefa existe
+    #garante que a tarefa existe ou lança erro 404
     task = get_task_by_id(db, task_id)
 
-    #nao deixa editar uma tarefa ja concluida
+    #regra de negócio: tarefas concluídas nao podem ser editadas para manter consistencia
     if task.is_completed:
         raise HTTPException(
-            status_code=status.HTTP_404_BAD_REQUEST,
-            detail="Não é possível editar uma tarefa já conlcuída"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Não é possível editar uma tarefa já concluída"
         )
     
     return task_repository.update(db, task, task_data)
@@ -50,7 +51,7 @@ def update_task(db: Session, task_id: int, task_data: TaskUpdate) -> Task:
 
 def delete_task(db: Session, task_id: int) -> None:
 
-    #verifica se a tarefa existe
+    #garante que a tarefa existe antes de realizar a remoção
     task = get_task_by_id(db, task_id)
     
     task_repository.delete(db, task)

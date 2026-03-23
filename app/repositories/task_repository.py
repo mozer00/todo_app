@@ -3,6 +3,10 @@ from sqlalchemy.orm import Session
 from app.models.task import Task
 from app.schemas.task import TaskCreate, TaskUpdate
 
+#camada responsável pela persistência de dados (CRUD no banco)
+#não deve conter regras de negócio
+
+
 def get_by_id(db: Session, task_id: int) -> Task | None:
 
     #select(Task) → gera "SELECT * FROM tasks"
@@ -14,8 +18,7 @@ def get_by_id(db: Session, task_id: int) -> Task | None:
 
 def get_all(db: Session, skip: int = 0, limit: int = 100) -> list[Task]:
 
-    #offset(skip) → pula N registros — base da paginação
-    #limit(limit) → retorna no máximo N registros
+    #aplica paginaçao via offset (skip) e limit
     statement = select(Task).offset(skip).limit(limit)
     #all() → retorna uma lista com todos os resultados
     return list(db.scalars(statement).all())
@@ -48,6 +51,7 @@ def update(db: Session, db_task: Task, task_data: TaskUpdate) -> Task:
 
 
 def delete(db: Session, db_task: Task) -> None:
-
-    db.delete(db_task)  #selecioca qual objeto vai ser removido
+    
+    #remove a entidade do banco de dados
+    db.delete(db_task)  #seleciona qual objeto será removido
     db.commit()         #envia e confirma a exclusao

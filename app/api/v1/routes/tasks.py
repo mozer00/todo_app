@@ -5,6 +5,10 @@ from app.schemas.task import TaskCreate, TaskResponse, TaskUpdate
 from app.services import task_service
 
 
+#camada de entrada da aplicação (HTTP)
+#responsável por receber requisições, validar dados e delegar para a camada de serviço
+
+
 #prefix = todas as rotas terão /tasks na frente automaticamente
 #tags = agrupa os endpoints na documentação /docs
 router = APIRouter(prefix="/task", tags=["Tasks"])
@@ -12,13 +16,13 @@ router = APIRouter(prefix="/task", tags=["Tasks"])
 
 @router.get(
     "/",
-    response_model=list[TaskResponse],  # fala pro fastapi como serializar a resposta
+    response_model=list[TaskResponse],  #define o schema de resposta (serialização)
     status_code=status.HTTP_200_OK
 )
 def list_tasks(
     skip: int = 0,
-    limit: int = 100,               #parâmetros de query: GET /tasks?skip=0&limit=10
-    db: Session = Depends(get_db)   #fastapi injeta a session automaticamente
+    limit: int = 100,               #parâmetros de paginação via query string: GET /tasks?skip=0&limit=10
+    db: Session = Depends(get_db)   #injeção da sessão do banco via dependency
 ):
     return task_service.get_all_tasks(db, skip=skip, limit=limit)
 
@@ -41,7 +45,7 @@ def get_task(
     status_code=status.HTTP_201_CREATED  #201 = criado com sucesso
 )
 def create_task(
-    task_data: TaskCreate,  #fastapi le o body json e valida com taskcreate
+    task_data: TaskCreate,  #fastapi lê o body json e valida com taskcreate
     db: Session = Depends(get_db)
 ):
     return task_service.create_task(db, task_data)
@@ -54,7 +58,7 @@ def create_task(
 )
 def update_task(
     task_id: int,
-    task_data: TaskUpdate,   #body json validade com taskupdate
+    task_data: TaskUpdate,   #body json validado com taskupdate
     db: Session = Depends(get_db)
 ):
     return task_service.update_task(db, task_id, task_data)
@@ -68,4 +72,4 @@ def delete_task(
     task_id: int,
     db: Session = Depends(get_db)
 ):
-    task_service.delete_task(db, task_id)  #nao tem return pq 204 nao tem corpo, entao nao precisa retornar nada
+    task_service.delete_task(db, task_id)  #204 indica sucesso sem conteúdo de resposta
